@@ -114,6 +114,22 @@ void loop() {
         forward();
       }
     }
+    else if (receivedChar == '6') { 
+      Serial.println("Carry");
+      carry();
+    }
+    else if (receivedChar == '7') { 
+      Serial.println("Lift");
+      lift();
+    }
+    else if (receivedChar == '8') { 
+      Serial.println("Carry");
+      carry();
+    }
+    else if (receivedChar == '9') { 
+      Serial.println("Move until obstacle");
+      moveUntilObstacle();
+    }
     else {
       Serial.println("Moving 3s");
       forward(3000);
