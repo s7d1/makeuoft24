@@ -3,12 +3,14 @@
 SoftwareSerial mySerial(10, 11); // RX, TX
 
 // motor A
+/*
 #define in11 4
 #define in12 3
 #define in13 2
 #define in14 1
 #define en1A 5
 #define en1B 0
+*/
 // motor B
 #define in21 10
 #define in22 9
@@ -28,13 +30,15 @@ int left_or_right = 0;  // left 0 by default, right 1
 void setup() {
   Serial.begin(9600);
 
-  pinMode(in11,OUTPUT);
-  pinMode(in12,OUTPUT);
-  pinMode(in13,OUTPUT);
-  pinMode(in14,OUTPUT);
+  /*
+    pinMode(in11,OUTPUT);
+    pinMode(in12,OUTPUT);
+    pinMode(in13,OUTPUT);
+    pinMode(in14,OUTPUT);
 
-  pinMode(en1A,OUTPUT); // Wheel speed control
-  pinMode(en1B,OUTPUT); // Wheel speed control
+    pinMode(en1A,OUTPUT); // Wheel speed control
+    pinMode(en1B,OUTPUT); // Wheel speed control
+  */
 
   pinMode(in21,OUTPUT);
   pinMode(in22,OUTPUT);
@@ -98,13 +102,15 @@ void loop() {
 
 void forward()
 {
-  digitalWrite(in11, HIGH); 
-  digitalWrite(in12, LOW);
-  digitalWrite(in13, LOW);
-  digitalWrite(in14, HIGH);
+  /*
+    digitalWrite(in11, HIGH); 
+    digitalWrite(in12, LOW);
+    digitalWrite(in13, LOW);
+    digitalWrite(in14, HIGH);
 
-  analogWrite(en1A, LeftRotationSpeed);
-  analogWrite(en1B, RightRotationSpeed);
+    analogWrite(en1A, LeftRotationSpeed);
+    analogWrite(en1B, RightRotationSpeed);
+  */
 
   digitalWrite(in21, HIGH); 
   digitalWrite(in22, LOW);
@@ -137,6 +143,7 @@ void moveUntilObstacle(){
 
 void left()
 {
+  /*
   digitalWrite(in11, LOW);  
   digitalWrite(in12, HIGH);
   digitalWrite(in13, HIGH); 
@@ -144,7 +151,8 @@ void left()
 
   analogWrite(en1A, LeftRotationSpeed);  
   analogWrite(en1B, RightRotationSpeed);
-  
+  */
+
   digitalWrite(in21, HIGH); 
   digitalWrite(in22, LOW);
   digitalWrite(in23, LOW); 
@@ -156,6 +164,7 @@ void left()
 
 void right()
 {
+  /*
   digitalWrite(in11, HIGH); 
   digitalWrite(in12, LOW);
   digitalWrite(in13, LOW); 
@@ -163,7 +172,8 @@ void right()
 
   analogWrite(en1A, LeftRotationSpeed);  
   analogWrite(en1B, RightRotationSpeed);
-  
+  */
+
   digitalWrite(in21, LOW);  
   digitalWrite(in22, HIGH);
   digitalWrite(in23, HIGH); 
@@ -176,11 +186,12 @@ void right()
 
 void stop()
 {
+/*
   digitalWrite(in11, LOW);
   digitalWrite(in12, LOW);
   digitalWrite(in13, LOW);
   digitalWrite(in14, LOW);
-
+*/
   digitalWrite(in21, LOW);
   digitalWrite(in22, LOW);
   digitalWrite(in23, LOW);
