@@ -8,6 +8,7 @@ const int rightSensor = 13;
 long duration;
 int distance;
 int state = 0;
+int left_or_right = 0;  // left 0 by default, right 1 
 
 // Motor A connections
 int enA = 9;
@@ -21,6 +22,9 @@ int leftdistance = 0;
 int rightdistance = 0;
 
 int checkDistance(){
+  /*
+    Uses ultrasonic sensor to determine distance from boundary/obstacles.
+  */
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -32,6 +36,9 @@ int checkDistance(){
 }
 
 void moveForward(){
+  /*
+    Moves the robot forward. 
+  */
   analogWrite(enA, 230);
 	analogWrite(enB, 255);
 
@@ -40,6 +47,22 @@ void moveForward(){
 	digitalWrite(in3, HIGH);
 	digitalWrite(in4, LOW);
 
+}
+
+void moveForward(int time){
+  /*
+    Moves the robot forward for a certain amount of time. 
+  */
+  unsigned long startTime = millis();
+  while(millis() - startTime < time){
+    analogWrite(enA, 230);
+    analogWrite(enB, 255);
+
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+  }
 }
 
 void Turnright(){
@@ -126,8 +149,34 @@ void setup() {
   Serial.begin(9600);
 }
 
+void moveUntilObstacle(){
+  /*
+    Keep moving till you encounter either a boundary or obstacle. Stop if you encounter it.
+  */
+  moveForward();
+  while(checkDistance() > 5){
+    moveForward();
+  }
+  stop();
+}
+
 
 void loop() {
+  moveUntilObstacle();
+  // simpler case for now, no obstacles (camera module will be used to detect obstacles)
+  if (left_or_right == 0){
+    Turnleft();
+    left_or_right = 1;
+    moveForward();
+    Turnleft();
+  }
+  else if (left_or_right == 1){
+    Turnright();
+    left_or_right = 0;
+    moveForward();
+    Turnright();
+  }
+  /*
   moveForward();
   if(checkDistance() <= 5){
     Turnleft();
@@ -143,6 +192,6 @@ void loop() {
     delay(1500);
     Turnleft();
   }
-  }
-
+  */
 }
+
