@@ -1,6 +1,14 @@
 #include <SoftwareSerial.h>
-
+#include <AFMotor.h>
 SoftwareSerial mySerial(10, 11); // RX, TX
+
+#include <Servo.h>
+
+
+Servo servo1; 
+
+Servo servo2;
+
 
 // motor A
 /*
@@ -18,7 +26,9 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 #define in24 7
 #define en2A 11
 #define en2B 6
-
+#define trigPin A0
+#define echoPin A1
+#define in12 12
 
 int M1_Speed = 80; // speed of motor 1
 int M2_Speed = 80; // speed of motor 2
@@ -44,11 +54,25 @@ void setup() {
   pinMode(in22,OUTPUT);
   pinMode(in23,OUTPUT);
   pinMode(in24,OUTPUT);
+  servo1.attach(3);
 
+  servo2.attach(5); 
   pinMode(en2A,OUTPUT); // Wheel speed control
   pinMode(en2B,OUTPUT); // Wheel speed control
   mySerial.begin(9600);
 
+}
+
+/*Needs to be changed according to condition of current arduino*/
+int checkDistance(){ //detect for obstacle and wall
+  digitalWrite(trigPin, LOW); //matching the pin to low, 0V
+  delayMicroseconds(2); //time
+  digitalWrite(trigPin, HIGH); 
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  float duration = pulseIn(echoPin, HIGH);
+  int distance = duration * 0.034 / 2;
+  return distance;
 }
 
 void loop() {
@@ -95,7 +119,6 @@ void loop() {
       forward(3000);
     }
   }
-
 
 }
 
@@ -196,4 +219,15 @@ void stop()
   digitalWrite(in22, LOW);
   digitalWrite(in23, LOW);
   digitalWrite(in24, LOW);
+}
+
+
+void carry(void){
+  servo1.write(0);
+  servo2.write(0);
+}
+
+void lift (void){
+  servo1.write(30);
+  servo2.write (90);
 }
