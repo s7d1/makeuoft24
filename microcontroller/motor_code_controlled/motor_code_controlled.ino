@@ -20,8 +20,8 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 
 int M1_Speed = 80; // speed of motor 1
 int M2_Speed = 80; // speed of motor 2
-int LeftRotationSpeed = 150;  // Left Rotation Speed
-int RightRotationSpeed = 150; // Right Rotation Speed
+int LeftRotationSpeed = 100;  // Left Rotation Speed
+int RightRotationSpeed = 100; // Right Rotation Speed
 int left_or_right = 0;  // left 0 by default, right 1 
 
 
@@ -35,6 +35,14 @@ void setup() {
 
   pinMode(en1A,OUTPUT); // Wheel speed control
   pinMode(en1B,OUTPUT); // Wheel speed control
+
+  pinMode(in21,OUTPUT);
+  pinMode(in22,OUTPUT);
+  pinMode(in23,OUTPUT);
+  pinMode(in24,OUTPUT);
+
+  pinMode(en2A,OUTPUT); // Wheel speed control
+  pinMode(en2B,OUTPUT); // Wheel speed control
   mySerial.begin(9600);
 
 }
@@ -77,6 +85,10 @@ void loop() {
         right();
         forward();
       }
+    }
+    else {
+      Serial.println("Moving 3s");
+      forward(3000);
     }
   }
 
@@ -123,26 +135,42 @@ void moveUntilObstacle(){
   stop();
 }
 
-void right()
+void left()
 {
-  digitalWrite(in21, LOW);  // Use in21 and in22 for motor B
-  digitalWrite(in22, HIGH);
-  digitalWrite(in23, LOW);  // Use in23 and in24 for motor B
+  digitalWrite(in11, LOW);  
+  digitalWrite(in12, HIGH);
+  digitalWrite(in13, HIGH); 
+  digitalWrite(in14, LOW);
+
+  analogWrite(en1A, LeftRotationSpeed);  
+  analogWrite(en1B, RightRotationSpeed);
+  
+  digitalWrite(in21, HIGH); 
+  digitalWrite(in22, LOW);
+  digitalWrite(in23, LOW); 
   digitalWrite(in24, HIGH);
 
-  analogWrite(en2A, LeftRotationSpeed);  // Use en2A and en2B for motor B
+  analogWrite(en2A, LeftRotationSpeed);  
   analogWrite(en2B, RightRotationSpeed);
 }
 
-void left()
+void right()
 {
-  digitalWrite(in11, HIGH);  // Use in11 and in12 for motor A
+  digitalWrite(in11, HIGH); 
   digitalWrite(in12, LOW);
-  digitalWrite(in13, HIGH);  // Use in13 and in14 for motor A
-  digitalWrite(in14, LOW);
+  digitalWrite(in13, LOW); 
+  digitalWrite(in14, HIGH);
 
-  analogWrite(en1A, LeftRotationSpeed);  // Use en1A and en1B for motor A
+  analogWrite(en1A, LeftRotationSpeed);  
   analogWrite(en1B, RightRotationSpeed);
+  
+  digitalWrite(in21, LOW);  
+  digitalWrite(in22, HIGH);
+  digitalWrite(in23, HIGH); 
+  digitalWrite(in24, LOW);
+
+  analogWrite(en2A, LeftRotationSpeed);  
+  analogWrite(en2B, RightRotationSpeed);
 }
 
 
