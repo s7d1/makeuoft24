@@ -1,197 +1,114 @@
-#include <Arduino.h>
+#include <SoftwareSerial.h>
 
-const int trigPin = 10;
-const int echoPin = 11;
-const int leftSensor = 12;
-const int rightSensor = 13;
-// defines variables
-long duration;
-int distance;
-int state = 0;
-int left_or_right = 0;  // left 0 by default, right 1 
+SoftwareSerial mySerial(10, 11); // RX, TX
 
-// Motor A connections
-int enA = 9;
-int in1 = 8;
-int in2 = 7;
-// Motor B connections
-int enB = 3;
-int in3 = 5;
-int in4 = 4;
-int leftdistance = 0;
-int rightdistance = 0;
+#define in11 4
+#define in12 3
+#define in13 2
+#define in14 1
+#define en1A 5
+#define en1B 0
 
-int checkDistance(){
-  /*
-    Uses ultrasonic sensor to determine distance from boundary/obstacles.
-  */
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);
-  distance = duration * 0.034 / 2;
-  return distance;
-}
-
-void moveForward(){
-  /*
-    Moves the robot forward. 
-  */
-  analogWrite(enA, 230);
-	analogWrite(enB, 255);
-
-  digitalWrite(in1, HIGH);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, HIGH);
-	digitalWrite(in4, LOW);
-
-}
-
-void moveForward(int time){
-  /*
-    Moves the robot forward for a certain amount of time. 
-  */
-  unsigned long startTime = millis();
-  while(millis() - startTime < time){
-    analogWrite(enA, 230);
-    analogWrite(enB, 255);
-
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-  }
-}
-
-void Turnright(){
-  analogWrite(enA, 255);
-	analogWrite(enB, 255);
-
-  digitalWrite(in1, HIGH);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, HIGH);
-  delay(275);//turn 90 degrees right, to be determined tmr
-}
-
-void Turnleft(){
-  analogWrite(enA, 255);
-	analogWrite(enB, 255);
-
-  digitalWrite(in1, LOW);
-	digitalWrite(in2, HIGH);
-	digitalWrite(in3, HIGH);
-	digitalWrite(in4, LOW);
-  delay(275);//turn 180 degrees left, to be determined tmr
-}
-
-void Turnbackwards(){
-  analogWrite(enA, 255);
-	analogWrite(enB, 230);
-
-    digitalWrite(in1, LOW);
-	  digitalWrite(in2, HIGH);
-	  digitalWrite(in3, HIGH);
-	  digitalWrite(in4, LOW);
-    delay(550);
-}
-
-void stop(){
-  analogWrite(enA, 255);
-	analogWrite(enB, 230);
-
-  digitalWrite(in1, LOW);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
-  delay(1000);
-}
-
-void checkState(){
-  bool leftSensorValue = digitalRead(leftSensor);
-  bool rightSensorValue = digitalRead(rightSensor);
-  //int frontDistance = checkDistance();
-  //Serial.println(rightSensorValue);
-  if (leftSensorValue){
-    state = 2;
-  }
-  else if (rightSensorValue){
-    state = 1;
-  }
-  else {
-    state = 0;
-  }
-
-}
+#define in21 10
+#define in22 9
+#define in23 8
+#define in24 7
+#define en2A 11
+#define en2B 6
 
 
+int M1_Speed = 80; // speed of motor 1
+int M2_Speed = 80; // speed of motor 2
+int LeftRotationSpeed = 150;  // Left Rotation Speed
+int RightRotationSpeed = 150; // Right Rotation Speed
 
 void setup() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT); 
-  pinMode(leftSensor, INPUT);
-  pinMode(rightSensor, INPUT);
-  pinMode(enA, OUTPUT);
-	pinMode(enB, OUTPUT);
-	pinMode(in1, OUTPUT);
-	pinMode(in2, OUTPUT);
-	pinMode(in3, OUTPUT);
-	pinMode(in4, OUTPUT);
-
-  digitalWrite(in1, LOW);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
-
-
   Serial.begin(9600);
-}
 
-void moveUntilObstacle(){
-  /*
-    Keep moving till you encounter either a boundary or obstacle. Stop if you encounter it.
-  */
-  moveForward();
-  while(checkDistance() > 5){
-    moveForward();
-  }
-  stop();
-}
+  pinMode(in11,OUTPUT);
+  pinMode(in12,OUTPUT);
+  pinMode(in13,OUTPUT);
+  pinMode(in14,OUTPUT);
 
+  pinMode(en1A,OUTPUT); // Wheel speed control
+  pinMode(en1B,OUTPUT); // Wheel speed control
+  mySerial.being(9600);
+
+}
 
 void loop() {
-  moveUntilObstacle();
-  // simpler case for now, no obstacles (camera module will be used to detect obstacles)
-  if (left_or_right == 0){
-    Turnleft();
-    left_or_right = 1;
-    moveForward();
-    Turnleft();
+  //mySerial.println("Hello world");
+  if (mySerial.available()) { // if data is available to read
+    char receivedChar = mySerial.read(); // read it
+    //Serial.write(receivedChar);
+
+
+    if (receivedChar == '0') { // if '1' is received
+      Serial.println("Straight");
+      forward();
+    } 
+    else if (receivedChar == '1') { // if '0' is received
+      Serial.println("Right"); // turn the LED off
+    }
+    else if (receivedChar == '2') 
+    { // if '0' is received
+      Serial.println("Left");  // turn the LED off
+    }else if (receivedChar == '3') { // if '0' is received
+      Serial.println("Stop");  // turn the LED off
+    }
   }
-  else if (left_or_right == 1){
-    Turnright();
-    left_or_right = 0;
-    moveForward();
-    Turnright();
-  }
-  /*
-  moveForward();
-  if(checkDistance() <= 5){
-    Turnleft();
-    stop();
-    moveForward();
-    delay(1500);
-    Turnright();
-    stop();
-    moveForward();
-    if(checkDistance() <= 5){
-    Turnright();
-    moveForward();
-    delay(1500);
-    Turnleft();
-  }
-  */
+
+
 }
 
+
+void forward()
+{
+  digitalWrite(in11, HIGH); 
+  digitalWrite(in12, LOW);
+  digitalWrite(in13, LOW);
+  digitalWrite(in14, HIGH);
+
+  analogWrite(en1A, LeftRotationSpeed);
+  analogWrite(en1B, RightRotationSpeed);
+
+  digitalWrite(in21, HIGH); 
+  digitalWrite(in22, LOW);
+  digitalWrite(in23, LOW);
+  digitalWrite(in24, HIGH);
+
+  analogWrite(en2A, LeftRotationSpeed);
+  analogWrite(en2B, RightRotationSpeed);
+}
+
+/*
+void right()
+{
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+
+  analogWrite(enA, LeftRotationSpeed);
+  analogWrite(enB, RightRotationSpeed);
+}
+
+void left()
+{
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+
+  analogWrite(enA, LeftRotationSpeed);
+  analogWrite(enB, RightRotationSpeed);
+}
+
+void stop()
+{
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+}
+*/
