@@ -194,8 +194,8 @@ void left()
 
   digitalWrite(in21, HIGH); 
   digitalWrite(in22, LOW);
-  digitalWrite(in23, LOW); 
-  digitalWrite(in24, HIGH);
+  digitalWrite(in23, HIGH); 
+  digitalWrite(in24, LOW);
 
   analogWrite(en2A, LeftRotationSpeed);  
   analogWrite(en2B, RightRotationSpeed);
@@ -215,8 +215,8 @@ void right()
 
   digitalWrite(in21, LOW);  
   digitalWrite(in22, HIGH);
-  digitalWrite(in23, HIGH); 
-  digitalWrite(in24, LOW);
+  digitalWrite(in23, LOW); 
+  digitalWrite(in24, HIGH);
 
   analogWrite(en2A, LeftRotationSpeed);  
   analogWrite(en2B, RightRotationSpeed);
